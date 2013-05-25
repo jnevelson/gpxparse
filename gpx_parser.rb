@@ -19,7 +19,7 @@ class GpxParser
   def elevation_diff
     gain = 0
     loss = 0
-    @points.each_cons(2) do |p1, p2|
+    points.each_cons(2) do |p1, p2|
       d = p2[:elevation] - p1[:elevation]
       gain += d if d > 0
       loss += d if d < 0
@@ -28,6 +28,3 @@ class GpxParser
   end
 end
 
-gain, loss = GpxParser.new.elevation_diff
-puts "Elevation gain: #{gain}m"
-puts "Elevation loss: #{loss}m"
