@@ -13,14 +13,18 @@ def build
   end
 end
 
-def elevation_gain
+def elevation_diff
   gain = 0
+  loss = 0
   @points.each_cons(2) do |p1, p2|
     d = p2[:elevation] - p1[:elevation]
     gain += d if d > 0
+    loss += d if d < 0
   end
-  gain
+  [gain, loss]
 end
 
 build
-puts elevation_gain
+gain, loss = elevation_diff
+puts "Elevation gain: #{gain}m"
+puts "Elevation loss: #{loss}m"
