@@ -1,28 +1,18 @@
 require 'nokogiri'
+require 'active_support/core_ext'
 
 class GpxParser
   attr_accessor :points
 
   def initialize
-    @points = []
-    Nokogiri::XML.parse(File.open(ARGV[0])).xpath("//xmlns:trkpt").each_with_index do |ele, idx|
-      dimensions = {
-        :lat => ele.xpath('@lat')[0].content,
-        :lon => ele.xpath('@lon')[0].content,
-        :elevation => ele.xpath('xmlns:ele')[0].content.to_i,
-        :time => ele.xpath('xmlns:time')[0].content
-      }
-      @points << dimensions
-    end
+    @points = Hash.from_xml(File.open(ARGV[0]))
   end
 
   def elevation_diff
-    gain = 0
-    loss = 0
-    points.each_cons(2) do |p1, p2|
-      d = p2[:elevation] - p1[:elevation]
-      gain += d if d > 0
-      loss += d if d < 0
+    gain = loss = 0
+    points['gpx']['trk']['trkseg']['trkpt'].each_cons(2) do |p1, p2|
+      d = p2['ele'].to_i - p1['ele'].to_i
+      d > 0 ? gain += d : loss -= d
     end
     [gain, loss]
   end
