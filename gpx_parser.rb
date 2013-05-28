@@ -4,8 +4,8 @@ require 'active_support/core_ext'
 class GpxParser
   attr_accessor :points
 
-  def initialize
-    @points = Hash.from_xml(File.open(ARGV[0]))
+  def initialize(file)
+    @points = Hash.from_xml(File.open(file))
   end
 
   def elevation_diff
@@ -16,5 +16,9 @@ class GpxParser
     end
     [gain, loss]
   end
+end
+
+if __FILE__ == $PROGRAM_NAME
+  puts GpxParser.new(ARGV[0]).elevation_diff  
 end
 
